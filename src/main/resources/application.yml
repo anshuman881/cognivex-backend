@@ -1,0 +1,42 @@
+#spring:
+#  ai:
+#    google:
+#      genai:
+#        api-key: ${GOOGLE_API_KEY}
+#        project-id: "gen-lang-client-0114119706"
+#        location: "us-central1"
+#        chat:
+#          options:
+#            model: "gemini-2.0-flash" # Use a chat model here!
+#        embedding:
+#          model: "gemini-embedding-001" # Flattened (remove 'options' if needed)
+#          api-key: ${GOOGLE_API_KEY}
+#          # Some versions require this specific key format:
+#          options:
+#            model: "gemini-embedding-001"
+
+#spring:
+#  ai:
+#    openai:
+#      api-key: ${API_KEY}
+#      base-url: https://router.huggingface.co/v1
+#      chat:
+#        options:
+#          model: MiniMaxAI/MiniMax-M2.5:fastest
+#      embedding:
+#        options:
+#          model: text-embedding-3-small   # <-- This will NOT work on HF router
+
+spring:
+  main:
+    web-application-type: reactive
+  ai:
+    openai:
+      base-url: https://router.huggingface.co/v1
+      api-key: ${API_KEY}
+      chat:
+        options:
+          model: gpt-4o-mini
+      embedding:
+        options:
+          model: text-embedding-3-small

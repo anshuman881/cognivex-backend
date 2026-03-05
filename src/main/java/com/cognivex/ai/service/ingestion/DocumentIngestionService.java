@@ -19,7 +19,6 @@ public class DocumentIngestionService {
                 new Document("Cognivex is an enterprise RAG platform."),
                 new Document("Spring AI helps integrate LLMs into Spring Boot apps.")
         );
-
         vectorStore.add(docs);
     }
 }

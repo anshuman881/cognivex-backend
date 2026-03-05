@@ -20,27 +20,4 @@ public class ChatController {
     private ChatController(ChatService chatService){
         this.chatService = chatService;
     }
-
-    @PostMapping(value = "/stream/{request}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    public Flux<String> streamChat(@PathVariable String request) {
-        return chatService.generateResponse(request);
-    }
-
-    @GetMapping(value = "/download-stream")
-    public ResponseEntity<Flux<DataBuffer>> downloadFileStream() throws IOException {
-        ClassPathResource resource =
-                new ClassPathResource("files/sample.pdf");
-        Flux<DataBuffer> data = DataBufferUtils.read(
-                resource,
-                new DefaultDataBufferFactory(),
-                4096
-        );
-
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION,
-                        "attachment; filename=sample.pdf")
-                .contentType(MediaType.APPLICATION_PDF)
-                .contentLength(resource.contentLength())
-                .body(data);
-    }
 }

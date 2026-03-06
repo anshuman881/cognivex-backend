@@ -1,22 +1,27 @@
-# Use OpenJDK 21 as base image
-FROM eclipse-temurin:25-jre-alpine
+# ---------- Build Stage ----------
+FROM maven:3.9.9-eclipse-temurin-25 AS builder
 
-# Set working directory
-WORKDIR /app
+WORKDIR /build
 
-# Copy Maven wrapper and pom.xml
-COPY mvnw .
-COPY mvnw.cmd .
+# Copy pom first (better caching)
 COPY pom.xml .
+RUN mvn -B -q -e -DskipTests dependency:go-offline
 
-# Copy source code
+# Copy source
 COPY src ./src
 
-# Build the application
-RUN ./mvnw clean package -DskipTests
+# Build jar
+RUN mvn clean package -DskipTests
 
-# Expose port
+
+# ---------- Runtime Stage ----------
+FROM eclipse-temurin:25-jre-alpine
+
+WORKDIR /app
+
+# Copy jar from build stage
+COPY --from=builder /build/target/*.jar app.jar
+
 EXPOSE 8080
 
-# Run the application
-CMD ["java", "-jar", "target/cognivex-0.0.1-SNAPSHOT.jar"]
+ENTRYPOINT ["java","-jar","app.jar"]

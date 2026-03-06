@@ -3,8 +3,11 @@ package com.cognivex.ai.service.ingestion;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.stereotype.Service;
 import org.springframework.ai.document.Document;
+import org.springframework.core.io.ClassPathResource;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.ArrayList;
 
 @Service
 public class DocumentIngestionService {
@@ -14,11 +17,21 @@ public class DocumentIngestionService {
         this.vectorStore = vectorStore;
     }
 
-    public void ingestDocument() {
-        List<Document> docs = List.of(
-                new Document("Cognivex is an enterprise RAG platform."),
-                new Document("Spring AI helps integrate LLMs into Spring Boot apps.")
-        );
+    public void ingestDocument() throws IOException {
+        // Read the sample text file from resources
+        ClassPathResource resource = new ClassPathResource("files/rag-sample.txt");
+        String content = new String(resource.getInputStream().readAllBytes());
+        
+        // Split content into chunks for better retrieval
+        String[] paragraphs = content.split("\n\n");
+        List<Document> docs = new ArrayList<>();
+        
+        for (String paragraph : paragraphs) {
+            if (!paragraph.trim().isEmpty()) {
+                docs.add(new Document(paragraph.trim()));
+            }
+        }
+        
         vectorStore.add(docs);
     }
 }

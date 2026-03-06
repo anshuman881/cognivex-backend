@@ -1,13 +1,12 @@
 package com.cognivex.ai.controller;
 
-import com.cognivex.ai.service.ingestion.RagService;
-import com.cognivex.ai.service.ingestion.DocumentIngestionService;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import reactor.core.publisher.Flux;
+
+import com.cognivex.ai.service.ingestion.DocumentIngestionService;
+import com.cognivex.ai.service.ingestion.RagService;
+
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
@@ -22,21 +21,19 @@ public class RagController {
         this.documentIngestionService = documentIngestionService;
     }
 
-    @GetMapping("/ask")
-    public Mono<String> ask(@RequestParam String question) {
-        return ragService.askModel(question);
-    }
-
-    @GetMapping(value="/chat", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public Mono<String> chat(String question) {
+    @GetMapping("/chat")
+    public Mono<String> chat(@RequestParam String question) {
         return ragService.askModel(question);
     }
 
     @GetMapping("/ingest")
     public Mono<String> ingest() {
-        return Mono.fromRunnable(() -> documentIngestionService.ingestDocument())
+        return Mono.fromCallable(() -> {
+                    documentIngestionService.ingestDocument();
+                    return "Documents ingested";
+                })
                 .subscribeOn(Schedulers.boundedElastic())
-                .thenReturn("Documents ingested");
+                .onErrorResume(e -> Mono.just("Error ingesting documents: " + e.getMessage()));
     }
 
 }

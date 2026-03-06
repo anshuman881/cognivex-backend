@@ -1,17 +1,16 @@
 package com.cognivex.ai.service;
 
-import org.springframework.ai.chat.prompt.Prompt;
-import org.springframework.ai.document.Document;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.ai.chat.model.ChatModel;
+import org.springframework.ai.document.Document;
 import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Flux;
+
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class RagService {

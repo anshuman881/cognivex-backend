@@ -1,30 +1,31 @@
 package com.cognivex.ai.service;
 
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.ai.chat.model.ChatModel;
-import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.VectorStore;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+
 import reactor.test.StepVerifier;
 
-import java.util.List;
-
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 class RagServiceTest {
-
-    @Autowired
-    private RagService ragService;
 
     @Mock
     private VectorStore vectorStore;
 
     @Mock
     private ChatModel chatModel;
+
+    @InjectMocks
+    private RagService ragService;
 
     @Test
     void testAskModel() {
@@ -34,11 +35,7 @@ class RagServiceTest {
             .thenReturn(List.of(doc));
 
         // Mock chat model
-        ChatResponse response = Mockito.mock(ChatResponse.class);
-        Mockito.when(response.getResult()).thenReturn(Mockito.mock());
-        Mockito.when(response.getResult().getOutput()).thenReturn(Mockito.mock());
-        Mockito.when(response.getResult().getOutput().getText()).thenReturn("Mocked response");
-        Mockito.when(chatModel.call(Mockito.anyString())).thenReturn(String.valueOf(response));
+        Mockito.when(chatModel.call(Mockito.anyString())).thenReturn("Mocked response");
 
         StepVerifier.create(ragService.askModel("Test question"))
             .expectNext("Mocked response")

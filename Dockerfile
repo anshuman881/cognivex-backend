@@ -1,5 +1,5 @@
 # ---------- Build Stage ----------
-FROM maven:3.9.9-eclipse-temurin-25 AS builder
+FROM maven:3.9-eclipse-temurin-25-alpine AS builder
 
 WORKDIR /build
 

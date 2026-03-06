@@ -3,14 +3,22 @@ spring:
     web-application-type: reactive
   ai:
     ollama:
-      base-url: ${OLLAMA_BASE_URL:http://localhost:11434}
       chat:
+        enabled: false
+      embedding:
+        enabled: false
+    huggingface:
+      chat:
+        enabled: true
+        api-key: ${HUGGINGFACE_API_KEY}
         options:
-          model: ${OLLAMA_CHAT_MODEL:qwen3.5:0.8b}
+          model: ${HUGGINGFACE_MODEL:mistralai/Mistral-7B-Instruct-v0.1}
           temperature: 0.7
       embedding:
+        enabled: true
+        api-key: ${HUGGINGFACE_API_KEY}
         options:
-          model: ${OLLAMA_EMBEDDING_MODEL:nomic-embed-text}
+          model: ${HUGGINGFACE_EMBEDDING_MODEL:sentence-transformers/all-MiniLM-L6-v2}
 
 logging:
   level:

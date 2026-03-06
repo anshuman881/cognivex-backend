@@ -7,22 +7,26 @@ import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.VectorStore;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
-@Service
-public class RagService {
+@Service("ragService")
+@Profile("prod")
+public class RagServiceProd implements RagServiceInterface {
 
     private final VectorStore vectorStore;
     private final ChatModel chatModel;
 
-    public RagService(VectorStore vectorStore, ChatModel chatModel) {
+    public RagServiceProd(@Qualifier("huggingfaceChatModel") ChatModel chatModel, VectorStore vectorStore) {
         this.vectorStore = vectorStore;
         this.chatModel = chatModel;
     }
 
+    @Override
     public Mono<String> askModel(String question) {
         return Mono.fromCallable(() -> {
                     SearchRequest searchRequest = SearchRequest.builder()
@@ -34,10 +38,10 @@ public class RagService {
                             .collect(Collectors.joining("\n"));
                     String prompt = """
                             Answer the question using only the context below.
-                            
+
                             Context:
                             %s
-                            
+
                             Question:
                             %s
                             """.formatted(context, question);

@@ -1,14 +1,15 @@
 package com.cognivex.ai.service;
 
-import org.springframework.stereotype.Service;
-import reactor.core.publisher.Flux;
-
 import java.time.Duration;
+
+import org.springframework.stereotype.Service;
+
+import reactor.core.publisher.Flux;
 
 @Service
 public class ChatService {
 
-    public ChatService(RagService ragService) {}
+    public ChatService(RagServiceInterface ragService) {}
 
     public Flux<String> generateResponse(String userMessage) {
         String response = "Hello! This is a simulated streaming response for: " + userMessage;

@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cognivex.ai.service.DocumentIngestionService;
-import com.cognivex.ai.service.RagService;
+import com.cognivex.ai.service.RagServiceInterface;
 
 import jakarta.validation.constraints.NotBlank;
 import reactor.core.publisher.Mono;
@@ -14,10 +14,10 @@ import reactor.core.scheduler.Schedulers;
 @RestController
 public class RagController {
 
-    private final RagService ragService;
+    private final RagServiceInterface ragService;
     private final DocumentIngestionService documentIngestionService;
 
-    public RagController(RagService ragService, DocumentIngestionService documentIngestionService) {
+    public RagController(RagServiceInterface ragService, DocumentIngestionService documentIngestionService) {
         this.ragService = ragService;
         this.documentIngestionService = documentIngestionService;
     }

@@ -33,22 +33,3 @@ management:
   endpoint:
     health:
       show-details: when_authorized
-
----
-spring:
-  config:
-    activate:
-      on-profile: prod
-  ai:
-    ollama:
-      base-url: ${OLLAMA_BASE_URL}
-      chat:
-        options:
-          model: ${OLLAMA_CHAT_MODEL}
-      embedding:
-        options:
-          model: ${OLLAMA_EMBEDDING_MODEL}
-
-logging:
-  level:
-    com.cognivex.ai: INFO

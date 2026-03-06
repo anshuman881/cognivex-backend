@@ -4,9 +4,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cognivex.ai.service.ingestion.DocumentIngestionService;
-import com.cognivex.ai.service.ingestion.RagService;
+import com.cognivex.ai.service.DocumentIngestionService;
+import com.cognivex.ai.service.RagService;
 
+import jakarta.validation.constraints.NotBlank;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
@@ -21,16 +22,16 @@ public class RagController {
         this.documentIngestionService = documentIngestionService;
     }
 
-    @GetMapping("/chat")
-    public Mono<String> chat(@RequestParam String question) {
+    @GetMapping("/v1/chat")
+    public Mono<String> chat(@RequestParam @NotBlank(message = "Question cannot be blank") String question) {
         return ragService.askModel(question);
     }
 
-    @GetMapping("/ingest")
+    @GetMapping("/v1/ingest")
     public Mono<String> ingest() {
         return Mono.fromCallable(() -> {
                     documentIngestionService.ingestDocument();
-                    return "Documents ingested";
+                    return "Documents ingested successfully";
                 })
                 .subscribeOn(Schedulers.boundedElastic())
                 .onErrorResume(e -> Mono.just("Error ingesting documents: " + e.getMessage()));

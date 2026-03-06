@@ -1,4 +1,4 @@
-package com.cognivex.ai.service.ingestion;
+package com.cognivex.ai.service;
 
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;

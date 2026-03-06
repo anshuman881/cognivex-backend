@@ -1,4 +1,4 @@
-package com.cognivex.ai.service.ingestion;
+package com.cognivex.ai.service;
 
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.document.Document;

@@ -4,8 +4,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cognivex.ai.service.ingestion.DocumentIngestionService;
-import com.cognivex.ai.service.ingestion.RagService;
+import com.cognivex.ai.service.DocumentIngestionService;
+import com.cognivex.ai.service.RagService;
 
 import jakarta.validation.constraints.NotBlank;
 import reactor.core.publisher.Mono;

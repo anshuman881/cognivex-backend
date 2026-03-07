@@ -1,11 +1,10 @@
 package com.cognivex.ai.controller;
 
+import com.cognivex.ai.service.IngestionService;
+import com.cognivex.ai.service.RagService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.cognivex.ai.service.DocumentIngestionService;
-import com.cognivex.ai.service.RagServiceInterface;
 
 import jakarta.validation.constraints.NotBlank;
 import reactor.core.publisher.Mono;
@@ -14,12 +13,12 @@ import reactor.core.scheduler.Schedulers;
 @RestController
 public class RagController {
 
-    private final RagServiceInterface ragService;
-    private final DocumentIngestionService documentIngestionService;
+    private final RagService ragService;
+    private final IngestionService ingestionService;
 
-    public RagController(RagServiceInterface ragService, DocumentIngestionService documentIngestionService) {
+    public RagController(RagService ragService, IngestionService ingestionService) {
         this.ragService = ragService;
-        this.documentIngestionService = documentIngestionService;
+        this.ingestionService = ingestionService;
     }
 
     @GetMapping("/v1/chat")
@@ -30,7 +29,7 @@ public class RagController {
     @GetMapping("/v1/ingest")
     public Mono<String> ingest() {
         return Mono.fromCallable(() -> {
-                    documentIngestionService.ingestDocument();
+                    ingestionService.ingestDocument();
                     return "Documents ingested successfully";
                 })
                 .subscribeOn(Schedulers.boundedElastic())

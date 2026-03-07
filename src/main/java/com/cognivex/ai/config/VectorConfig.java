@@ -9,11 +9,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
 @Configuration
-@Profile("local")
 public class VectorConfig {
 
     @Bean
-    public VectorStore vectorStore(@Qualifier("ollamaEmbeddingModel") EmbeddingModel embeddingModel) {
+    public VectorStore vectorStore(EmbeddingModel embeddingModel) {
         return SimpleVectorStore
                 .builder(embeddingModel)
                 .build();

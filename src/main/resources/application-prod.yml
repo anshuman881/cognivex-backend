@@ -1,0 +1,42 @@
+spring:
+  main:
+    web-application-type: reactive
+  ai:
+    openai:
+      base-url: https://ollama.com
+      api-key: ${API_KEY}
+      chat:
+        options:
+          model: ${OLLAMA_CHAT_MODEL:gpt-oss:120b}
+          temperature: 0.7
+    ollama:
+      base-url: http://localhost:11434
+      chat:
+        enable: false
+      embedding:
+        options:
+          model: nomic-embed-text
+
+logging:
+  level:
+    reactor.netty.http.client: TRACE
+    org.springframework.web.client: TRACE
+    org:
+      springframework:
+        ai: TRACE
+        web:
+          client:
+            RestClient: TRACE
+        security: TRACE
+    com.cognivex.ai: TRACE
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: when_authorized

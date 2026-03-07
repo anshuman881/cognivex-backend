@@ -25,7 +25,7 @@ class RagServiceTest {
     private ChatModel chatModel;
 
     @InjectMocks
-    private RagServiceLocal ragService;
+    private RagService ragService;
 
     @Test
     void testAskModel() {

@@ -10,10 +10,10 @@ import java.util.List;
 import java.util.ArrayList;
 
 @Service
-public class DocumentIngestionService {
+public class IngestionService {
 
     private final VectorStore vectorStore;
-    public DocumentIngestionService(VectorStore vectorStore) {
+    public IngestionService(VectorStore vectorStore) {
         this.vectorStore = vectorStore;
     }
 

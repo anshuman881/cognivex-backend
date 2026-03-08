@@ -22,7 +22,7 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable())
             .authorizeExchange(auth -> auth
-                .pathMatchers("/actuator/**", "/v3/api-docs/**", "/swagger-ui/**").permitAll()
+                .pathMatchers("/actuator/**", "/v3/api-docs/**", "/swagger-ui/**","/ws/**").permitAll()
                 .anyExchange().authenticated()
             )
             .httpBasic(Customizer.withDefaults());

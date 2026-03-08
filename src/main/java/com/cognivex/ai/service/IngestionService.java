@@ -31,7 +31,6 @@ public class IngestionService {
                 docs.add(new Document(paragraph.trim()));
             }
         }
-        
         vectorStore.add(docs);
     }
 }

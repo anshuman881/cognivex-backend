@@ -1,13 +1,12 @@
 package com.cognivex.ai.service;
 
 import jakarta.annotation.PostConstruct;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
 import java.lang.management.MemoryUsage;
@@ -45,19 +44,7 @@ public class MetricsService {
             metrics.put("pid", pid);
             
             // Memory metrics
-            MemoryMXBean memoryBean = ManagementFactory.getMemoryMXBean();
-            MemoryUsage heapUsage = memoryBean.getHeapMemoryUsage();
-            MemoryUsage nonHeapUsage = memoryBean.getNonHeapMemoryUsage();
-            
-            Map<String, Object> memory = new HashMap<>();
-            memory.put("heapInit", heapUsage.getInit());
-            memory.put("heapUsed", heapUsage.getUsed());
-            memory.put("heapMax", heapUsage.getMax());
-            memory.put("heapCommitted", heapUsage.getCommitted());
-            memory.put("nonHeapInit", nonHeapUsage.getInit());
-            memory.put("nonHeapUsed", nonHeapUsage.getUsed());
-            memory.put("nonHeapMax", nonHeapUsage.getMax());
-            memory.put("nonHeapCommitted", nonHeapUsage.getCommitted());
+            Map<String, Object> memory = getStringObjectMap();
             metrics.put("memory", memory);
             
             // Thread metrics
@@ -89,24 +76,7 @@ public class MetricsService {
                 gc.put(gcBean.getName(), gcInfo);
             });
             metrics.put("gc", gc);
-            
-            // Execute jcmd for additional diagnostics
-            try {
-//                String jcmdOutput = executeJcmd("VM.native_memory summary");
-//                metrics.put("nativeMemory", parseNativeMemory(jcmdOutput));
-            } catch (Exception e) {
-                logger.debug("jcmd native_memory not available: {}", e.getMessage());
-            }
-            
-            try {
-//                String jcmdOutput = executeJcmd("Thread.print");
-//                metrics.put("threadDump", jcmdOutput);
-            } catch (Exception e) {
-                logger.debug("jcmd Thread.print not available: {}", e.getMessage());
-            }
-            
             currentMetrics = metrics;
-            
             // Notify subscribers
             for (Consumer<Map<String, Object>> subscriber : subscribers) {
                 try {
@@ -122,44 +92,29 @@ public class MetricsService {
             logger.error("Error collecting metrics: {}", e.getMessage(), e);
         }
     }
-    
-    private String executeJcmd(String command) throws Exception {
-        ProcessBuilder pb = new ProcessBuilder("jcmd", String.valueOf(pid), command);
-        pb.redirectErrorStream(true);
-        Process process = pb.start();
-        
-        StringBuilder output = new StringBuilder();
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                output.append(line).append("\n");
-            }
-        }
-        
-        process.waitFor();
-        return output.toString();
+
+    private static @NonNull Map<String, Object> getStringObjectMap() {
+        MemoryMXBean memoryBean = ManagementFactory.getMemoryMXBean();
+        MemoryUsage heapUsage = memoryBean.getHeapMemoryUsage();
+        MemoryUsage nonHeapUsage = memoryBean.getNonHeapMemoryUsage();
+
+        Map<String, Object> memory = new HashMap<>();
+        memory.put("heapInit", heapUsage.getInit());
+        memory.put("heapUsed", heapUsage.getUsed());
+        memory.put("heapMax", heapUsage.getMax());
+        memory.put("heapCommitted", heapUsage.getCommitted());
+        memory.put("nonHeapInit", nonHeapUsage.getInit());
+        memory.put("nonHeapUsed", nonHeapUsage.getUsed());
+        memory.put("nonHeapMax", nonHeapUsage.getMax());
+        memory.put("nonHeapCommitted", nonHeapUsage.getCommitted());
+        return memory;
     }
-    
-    private Map<String, Object> parseNativeMemory(String output) {
-        Map<String, Object> result = new HashMap<>();
-        if (output == null || output.isEmpty()) {
-            return result;
-        }
-        
-        // Simple parsing - just store raw output for now
-        result.put("raw", output.substring(0, Math.min(500, output.length())));
-        return result;
-    }
-    
+
     public void subscribe(Consumer<Map<String, Object>> callback) {
         subscribers.add(callback);
         // Immediately send current metrics to new subscriber
         if (currentMetrics != null) {
             callback.accept(currentMetrics);
         }
-    }
-    
-    public Map<String, Object> getCurrentMetrics() {
-        return currentMetrics;
     }
 }
